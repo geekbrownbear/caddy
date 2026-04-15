@@ -1,0 +1,9 @@
+# Global options only — routes are injected automatically by caddy-docker-proxy
+# reading container labels.  Do not add site blocks here.
+{
+    email {$ACME_EMAIL}
+
+    servers {
+        protocols tls1.2 tls1.3
+    }
+}

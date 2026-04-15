@@ -1,0 +1,42 @@
+networks:
+  # All app stacks that want Caddy to proxy them must join this network.
+  # Declare it as `external: true` in each app stack's compose file.
+  caddy_proxy:
+    name: caddy_proxy
+
+volumes:
+  caddy_data:
+  caddy_config:
+
+services:
+  caddy:
+    image: lucaslorentz/caddy-docker-proxy:ci-alpine
+    container_name: caddy-proxy
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"   # HTTP/3 QUIC
+    volumes:
+      # Read-only Docker socket — caddy-docker-proxy watches container events
+      # to auto-discover routes from labels.
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    environment:
+      ACME_EMAIL: ${ACME_EMAIL}
+      # Only discover containers on the caddy_proxy network — prevents
+      # accidentally picking up unrelated containers on other networks.
+      CADDY_INGRESS_NETWORKS: caddy_proxy
+    networks:
+      - caddy_proxy
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    cap_add:
+      - NET_BIND_SERVICE   # bind to privileged ports 80/443
+    read_only: true
+    tmpfs:
+      - /tmp
