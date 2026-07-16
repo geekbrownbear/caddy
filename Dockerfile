@@ -7,6 +7,12 @@
 ARG CADDY_VERSION=2.9.1
 FROM caddy:${CADDY_VERSION}-builder AS builder
 
+# The builder image pins an older Go toolchain and sets GOTOOLCHAIN=local,
+# which blocks auto-fetching a newer one - but caddy-docker-proxy/v2's latest
+# release needs a newer Go than this image ships. `auto` lets Go fetch
+# whatever toolchain version go.mod actually requires.
+ENV GOTOOLCHAIN=auto
+
 RUN xcaddy build \
     --with github.com/lucaslorentz/caddy-docker-proxy/v2 \
     --with github.com/caddy-dns/cloudflare
