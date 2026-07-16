@@ -4,7 +4,7 @@
 #
 # Check your currently-running Caddy version before changing this:
 #   docker exec caddy-proxy caddy version
-ARG CADDY_VERSION=2.9.1
+ARG CADDY_VERSION=2.11.4
 FROM caddy:${CADDY_VERSION}-builder AS builder
 
 # The builder image pins an older Go toolchain and sets GOTOOLCHAIN=local,
