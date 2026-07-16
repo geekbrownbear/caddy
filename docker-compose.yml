@@ -10,7 +10,10 @@ volumes:
 
 services:
   caddy:
-    image: lucaslorentz/caddy-docker-proxy:ci-alpine
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: caddy-docker-proxy-cloudflare:local
     container_name: caddy-proxy
     restart: unless-stopped
     ports:
@@ -26,6 +29,7 @@ services:
       - caddy_config:/config
     environment:
       ACME_EMAIL: ${ACME_EMAIL}
+      CF_API_TOKEN: ${CF_API_TOKEN:?set CF_API_TOKEN in .env - Cloudflare token scoped to Zone:DNS:Edit on bearium.net}
       # Only discover containers on the caddy_proxy network — prevents
       # accidentally picking up unrelated containers on other networks.
       CADDY_INGRESS_NETWORKS: caddy_proxy

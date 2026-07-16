@@ -3,6 +3,9 @@
 {
     email {$ACME_EMAIL}
 
+    # DNS-01 challenge via Cloudflare 
+    acme_dns cloudflare {$CF_API_TOKEN}
+
     servers {
         protocols tls1.2 tls1.3
     }
