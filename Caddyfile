@@ -3,10 +3,11 @@
 {
     email {$ACME_EMAIL}
 
-    # DNS-01 challenge via Cloudflare 
+    # DNS-01 challenge via Cloudflare
     acme_dns cloudflare {$CF_API_TOKEN}
 
-    servers {
-        protocols tls1.2 tls1.3
-    }
+    # No explicit TLS min-version pin needed: Caddy already refuses TLS
+    # below 1.2 by default. (Previous `servers { protocols tls1.2 tls1.3 }`
+    # block removed - that subdirective configures HTTP protocols (h1/h2/
+    # h2c/h3), not TLS versions, and was invalid Caddyfile syntax.)
 }
