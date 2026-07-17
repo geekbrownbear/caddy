@@ -33,6 +33,14 @@ services:
       # Only discover containers on the caddy_proxy network — prevents
       # accidentally picking up unrelated containers on other networks.
       CADDY_INGRESS_NETWORKS: caddy_proxy
+      # REQUIRED for the mounted Caddyfile's global options (email, acme_dns)
+      # to actually be merged with the label-derived site blocks - just
+      # mounting the file at the conventional path is NOT enough,
+      # caddy-docker-proxy silently runs on labels alone without this var
+      # (confirmed via /config/caddy/autosave.json showing no "tls" app key
+      # at all in the live config despite the Caddyfile parsing correctly
+      # in isolation via `caddy adapt`).
+      CADDY_DOCKER_CADDYFILE_PATH: /etc/caddy/Caddyfile
     networks:
       - caddy_proxy
     security_opt:
